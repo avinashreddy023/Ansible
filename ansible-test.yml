@@ -1,0 +1,36 @@
+---
+- hosts: webservers
+  user: ansible
+  become: yes
+  
+  vars:
+    pkgname: httpd
+    pkgname1: apache2
+
+  tasks:
+    - name: Removing {{pkgname}} software
+      yum:
+        pkg: "{{pkgname}}" 
+        state: absent
+
+    - name: installing {{pkgname}} software
+      yum:
+        pkg: "{{pkgname}}" 
+
+    - name: startingg {{pkgname}} services
+      service:
+        name: httpd
+        state: started
+      when: ansible_os_family == "RedHat"
+
+    - name: installing {{pkgname1}} software
+      apt:
+        name: "{{pkgname1}}"
+        state: present
+      when: ansible_os_family == "Debian"
+
+    - name: startingg {{pkgname1}} services
+      service:
+         name: "{{pkgname1}}"
+         state: started
+      when: ansible_os_family == "Debian"    
